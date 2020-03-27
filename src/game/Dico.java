@@ -12,7 +12,10 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 
 /**
  *
@@ -27,6 +30,7 @@ public class Dico {
     private ArrayList<String> listeNiveau5;
     private String cheminFichierDico;
 
+    // @cheminFichierDico = chemin du dictionnaire XML
     public Dico(String cheminFichierDico) {
         this.cheminFichierDico = cheminFichierDico;
         this.listeNiveau1 = new ArrayList<String>();
@@ -37,6 +41,7 @@ public class Dico {
 
     }
 
+    // Méthode qui permet de piocher aleatoirement un mot danns une liste de niveau "niveau"
     public String getMotDepuisListeNiveaux(int niveau) {
         String aretourner = "";
         niveau = this.verifieNiveau(niveau);
@@ -60,6 +65,7 @@ public class Dico {
         return aretourner;
     }
 
+    // ajoute le mot "mot" dans la liste de niveau "niveau"
     public void ajouteMotADico(int niveau, String mot) {
         switch (this.verifieNiveau(niveau)) {
             case 1:
@@ -84,6 +90,7 @@ public class Dico {
         return "";
     }
 
+    // Verifie que le niveau passé soit bien dans l'interval des valeurs [1;5]
     private int verifieNiveau(int niveau) {
         int aretourner = niveau;
         if (niveau < 1 || niveau > 5) {
@@ -93,6 +100,7 @@ public class Dico {
         return aretourner;
     }
 
+    // Extrait un mot aleatoirement dans une liste
     private String getMotDepuisListe(ArrayList<String> list) {
         Random r = new Random();
         if (list.size() > 0) {
@@ -102,15 +110,41 @@ public class Dico {
         }
     }
 
-    public void lireDictionnaireDOM(String path, String filename){
-        try {
-            DOMParser parser = new DOMParser();
-            // parse le document XML correspondant au fichier filename dans le chemin path
-            parser.parse(path + "" + filename);
-            Document doc = parser.getDocument();
-            System.out.println("nom de la racine " + doc.getNodeName());
-        } catch (SAXException ex) {
-        } catch (IOException ex) {
-        }
-    }
+      public void lireDictionnaireDOM(String path, String filename) throws SAXException, IOException {
+
+        DOMParser parser = new DOMParser();
+        parser.parse(path + "" + filename);
+        Document racine = parser.getDocument();
+
+        // récupère la liste des éléments nommés tr:pos
+        NodeList posList = racine.getElementsByTagName( "mot");
+            System.out.println("nombre de mot =   "+ posList.getLength());
+
+        for (int i = 0; i < posList.getLength(); i++) {
+            Element mot = (Element) posList.item(i);
+            String mot_text = mot.getTextContent();
+            int mot_niveau =  Integer.parseInt(mot.getAttribute("niveau"));
+            System.out.println(mot_text  + "("+mot_niveau  +")");
+            
+            switch(mot_niveau)
+            {
+                case 1:
+                    this.listeNiveau1.add(mot_text);
+                    break;
+                case 2:
+                     this.listeNiveau2.add(mot_text);
+                    break;
+                case 3:
+                     this.listeNiveau3.add(mot_text);
+                    break;
+                case 4:
+                     this.listeNiveau4.add(mot_text);
+                    break;
+                case 5:
+                     this.listeNiveau5.add(mot_text);
+                    break;
+            }
+            
+        }}
+   
 }

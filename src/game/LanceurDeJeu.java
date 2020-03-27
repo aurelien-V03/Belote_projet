@@ -11,13 +11,7 @@ package game;
  */
 public class LanceurDeJeu {
     public static void main(String args[]) {
-        Jeu j = new Jeu();
+        Jeu2 j = new JeuDevineLeMotOrdre();
         j.execute();
-        // Declare un Jeu
-        //?!!?;
-        //Instancie un nouveau jeu
-        //?!!?;
-        //Execute le jeu
-        //?!!?;
     }
 }

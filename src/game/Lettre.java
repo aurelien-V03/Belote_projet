@@ -34,5 +34,9 @@ public class Lettre extends EnvNode{
         this.setTexture("models/letter/cube.png");
         this.setModel("models/letter/cube.obj");
     }
+     
+     public String toString(){
+         return Character.toString(this.letter);
+     }
     
 }
