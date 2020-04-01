@@ -17,6 +17,7 @@ public class JeuDevineLeMotOrdre extends Jeu2{
 
     @Override
     protected void demarrePartie(Partie partie) {
+        System.out.println("DEMARRE PARTIE");
         this.chrono = new Chronometre(20000);
         this.nbLettresRestantes = super.lettres.size();
         
@@ -24,6 +25,8 @@ public class JeuDevineLeMotOrdre extends Jeu2{
 
     @Override
     protected void appliqueRegles(Partie partie) {
+                System.out.println("APPLIQUE PARTIE");
+
         // Le temps est ecoule
         if(chrono.remainsTime() == false)
         {
@@ -46,6 +49,7 @@ public class JeuDevineLeMotOrdre extends Jeu2{
 
     @Override
     protected void terminePartie(Partie partie) {
+         System.out.println("TERMINE PARTIE");
         partie.setTrouve(nbLettresRestantes);
         partie.setTemps(chrono.timeSpent());
     }

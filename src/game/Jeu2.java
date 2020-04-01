@@ -7,13 +7,16 @@ package game;
 
 import env3d.Env;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.lwjgl.input.Keyboard;
 import org.xml.sax.SAXException;
 import test.TestDico;
-
 
 public abstract class Jeu2 {
 
@@ -22,29 +25,25 @@ public abstract class Jeu2 {
         MENU_SORTIE, MENU_CONTINUE, MENU_JOUE
     }
 
-
     private Env env;
     private Room room;
     private Profil profil;
-    private Tux tux;    
+    private Tux tux;
     public ArrayList<Lettre> lettres;
     public Dico dictionnaire;
-   
+
     private final Room menuRoom;
     EnvText textNomJoueur;
     EnvText textMenuQuestion;
-    
+
     EnvText textMenuJeu1;
     EnvText textMenuJeu2;
     EnvText textMenuJeu3;
     EnvText textMenuJeu4;
-    
+
     EnvText textMenuPrincipal1;
     EnvText textMenuPrincipal2;
     EnvText textMenuPrincipal3;
-
-
-
 
     public Jeu2() {
         this.lettres = new ArrayList<Lettre>();
@@ -60,19 +59,19 @@ public abstract class Jeu2 {
         menuRoom.setTextureNorth("textures/black.png");
         menuRoom.setTextureBottom("textures/black.png");
 
-       // Règle la camera
+        // Règle la camera
         env.setCameraXYZ(50, 60, 175);
         env.setCameraPitch(-20);
 
-         // Désactive les contrôles par défaut
+        // Désactive les contrôles par défaut
         env.setDefaultControl(false);
 
         // Instancie un profil par défaut
-        profil = new Profil("");
-        
+        profil = new Profil("src/XML/default.xml");
+
         // Dictionnaire
-         System.out.println("Chargement du dico : ");
-           dictionnaire = new Dico("");
+        System.out.println("Chargement du dico : ");
+        dictionnaire = new Dico("");
         try {
             dictionnaire.lireDictionnaireDOM("src/game/", "dictionnaire.xml");
         } catch (SAXException ex) {
@@ -80,10 +79,7 @@ public abstract class Jeu2 {
         } catch (IOException ex) {
             Logger.getLogger(TestDico.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
-        
-        
-        
+
         // Textes affichés à l'écran
         textMenuQuestion = new EnvText(env, "Voulez vous ?", 200, 300);
         textMenuJeu1 = new EnvText(env, "1. Commencer une nouvelle partie ?", 250, 280);
@@ -148,13 +144,14 @@ public abstract class Jeu2 {
     }
 
     /**
-     * Permet de saisir le nom d'un joueur et de l'affiche à l'écran durant la saisie
+     * Permet de saisir le nom d'un joueur et de l'affiche à l'écran durant la
+     * saisie
      *
      * @return le nom du joueur au format String
      */
     private String getNomJoueur() {
         textNomJoueur.modifyTextAndDisplay("Choisissez un nom de joueur : ");
-     
+
         int touche = 0;
         String nomJoueur = "";
         while (!(nomJoueur.length() > 0 && touche == Keyboard.KEY_RETURN)) {
@@ -176,7 +173,6 @@ public abstract class Jeu2 {
         return nomJoueur;
     }
 
-    
     /**
      * Menu principal
      *
@@ -201,7 +197,7 @@ public abstract class Jeu2 {
         while (!(touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3)) {
             touche = env.getKey();
             env.advanceOneFrame();
-            System.out.println("touche = " + touche );
+            System.out.println("touche = " + touche);
 
         }
 
@@ -219,13 +215,18 @@ public abstract class Jeu2 {
             case Keyboard.KEY_1:
                 // demande le nom du joueur existant
                 nomJoueur = getNomJoueur();
+                System.out.println("Nom du joueur choisi : " + nomJoueur);
                 // charge le profil de ce joueur si possible
                 if (profil.charge(nomJoueur)) {
                     // lance le menu de jeu et récupère le choix à la sortie de ce menu de jeu
+                    System.out.println("Nom du joueur VALIDE : " + nomJoueur + "PROFIL = " + profil);
                     choix = menuJeu();
+
                 } else {
                     // sinon continue (et boucle dans ce menu)
+                    System.out.println("Nom du joueur NON VALIDE : " + nomJoueur);
                     choix = MENU_VAL.MENU_CONTINUE;
+
                 }
                 break;
 
@@ -251,7 +252,6 @@ public abstract class Jeu2 {
         return choix;
     }
 
-    
     /**
      * Menu de jeu
      *
@@ -296,29 +296,25 @@ public abstract class Jeu2 {
                 // Touche 1 : Commencer une nouvelle partie
                 // -----------------------------------------                
                 case Keyboard.KEY_1: // choisi un niveau et charge un mot depuis le dico
-                    
-                    
-                   int toucheNiveau = this.getNiveauChoix();
-                    String mot =  dictionnaire.getMotDepuisListeNiveaux(toucheNiveau);
-                    
-                    
-                    
+
+                    int toucheNiveau = this.getNiveauChoix();
+                    String mot = dictionnaire.getMotDepuisListeNiveaux(toucheNiveau);
+
                     System.out.println("Mot a chercher = " + mot);
                     char[] mot_caracteres = mot.toCharArray();
                     int z = 10;
                     int y = 10;
-                    for(char c :mot_caracteres)
-                    {
-                        this.lettres.add(new Lettre(c,z,y));
+                    for (char c : mot_caracteres) {
+                        this.lettres.add(new Lettre(c, z, y));
                         z += 10;
                         y += 10;
                     }
-                    
+
                     // .......... dico ...........
                     // crée un nouvelle partie
                     System.out.println("KEY 1");
-             
-                    partie = new Partie(java.time.LocalDate.now().toString(),mot,1);
+
+                    partie = new Partie(java.time.LocalDate.now().toString(), mot, 1);
                     // joue
                     joue(partie);
                     // enregistre la partie dans le profil --> enregistre le profil
@@ -330,17 +326,69 @@ public abstract class Jeu2 {
                 // Touche 2 : Charger une partie existante
                 // -----------------------------------------                
                 case Keyboard.KEY_2: // charge une partie existante
-                    // demander de fournir une date
-                    // ..........
-                    // tenter de trouver une partie à cette date
-                      partie = new Partie("","",1);
 
-                    // .......
+                    // demander de fournir une date    (format jj/mm/aaaa)
+                    String regex = "^(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])-[0-9]{4}$";
+                    //Creating a pattern object
+                    Pattern pattern = Pattern.compile(regex);
+                    //Matching the compiled pattern in the String
+                    Matcher matcher;
+                    boolean bool = false;
+
+                    this.textMenuPrincipal1.modifyTextAndDisplay("Date de votre partie : (aaaa/mm/jj)");
+
+                    // recupere la date que l'utilisateur veut
+                    String date = "";
+                    date = this.textMenuPrincipal1.lire(true);
+                       
+
+                    this.textMenuPrincipal1.clean();
+
+                    // tenter de trouver une partie à cette date
+                    Partie partieJouable = null;
+                    boolean partieJouableFound = false;
+                    
+                    for(Partie p : this.profil.getParties())
+                    {
+                        try{
+                            SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd");  
+                            Date datePartie = dateformat.parse(p.getDate());
+                            Date dateSouhaitee = dateformat.parse(date);
+                            // partie et date demandee MEME jour
+                            if(datePartie.compareTo(dateSouhaitee) == 0)
+                            {
+                              System.out.println("DATE  JOUR = " + datePartie.getTime() + " --- "  + dateSouhaitee.getTime());
+                               System.out.println("\t\tPartie = " + p);
+                                partieJouable = p;
+                                partieJouableFound = true;
+                            }
+                            // jour different
+                            else
+                            {
+                                 System.out.println("DATE DIFF JOUR = " + datePartie.getTime() + " --- "  + dateSouhaitee.getTime());
+
+                            }                                                
+                        }catch(Exception e)
+                        {
+                            System.out.println(e.getMessage());
+                        }
+
+                    }
+              
                     // Si partie trouvée, recupère le mot de la partie existante, sinon ???
-                    // ..........
-                    // ..........
+                    if(partieJouableFound)
+                    {
+                        
+                    }
+                    else
+                    {
+                        
+                    }
+                    
+                    
+                    
                     // joue
-                    joue(partie);
+                    joue(partieJouable);
                     // enregistre la partie dans le profil --> enregistre le profil
                     // .......... profil ........
                     playTheGame = MENU_VAL.MENU_JOUE;
@@ -363,33 +411,31 @@ public abstract class Jeu2 {
         return playTheGame;
     }
 
-    
     // permet au joueur de saisir un niveau entre 1 et 5 
- private int getNiveauChoix(){
-     int toucheNiveau = 0;
-     textMenuJeu1.modifyTextAndDisplay("Choix du niveau (1-5) : ");
-                     toucheNiveau = 0;
-                    while (toucheNiveau < 1 ||toucheNiveau > 5) {
-                        toucheNiveau = env.getKey();
-                        toucheNiveau -= 1;
-                        env.advanceOneFrame();
-                        System.out.println("touche niveau = " + toucheNiveau );
-                    }
-                    
-                    textMenuJeu1.clean();
-     return toucheNiveau;
- }
-public void joue(Partie partie) {
-       
+    private int getNiveauChoix() {
+        int toucheNiveau = 0;
+        textMenuJeu1.modifyTextAndDisplay("Choix du niveau (1-5) : ");
+        toucheNiveau = 0;
+        while (toucheNiveau < 1 || toucheNiveau > 5) {
+            toucheNiveau = env.getKey();
+            toucheNiveau -= 1;
+            env.advanceOneFrame();
+            System.out.println("touche niveau = " + toucheNiveau);
+        }
+
+        textMenuJeu1.clean();
+        return toucheNiveau;
+    }
+
+    public void joue(Partie partie) {
+
         // affiche 5 secondes la lettre a l'ecran 
         Chronometre c = new Chronometre(5000);
         this.textMenuPrincipal1.modifyTextAndDisplay(partie.getMot());
-        this.textMenuPrincipal2.modifyTextAndDisplay( (5 - c.timeSpent()) + " seonces restantes");
-        while(c.remainsTime())
-        {
+        this.textMenuPrincipal2.modifyTextAndDisplay((5 - c.timeSpent()) + " seonces restantes");
+        while (c.remainsTime()) {
             env.advanceOneFrame();
-        this.textMenuPrincipal2.modifyTextAndDisplay( (5 - c.timeSpent()) + " seonces restantes");
-
+            this.textMenuPrincipal2.modifyTextAndDisplay((5 - c.timeSpent()) + " seonces restantes");
 
         }
         textMenuPrincipal1.clean();
@@ -397,11 +443,10 @@ public void joue(Partie partie) {
         // Instancie un Tux
         this.tux = new Tux(env, room);
         env.addObject(tux);
-        
+
         for (Lettre l : lettres) {
             env.addObject(l);
         }
-
 
         // Ici, on peut initialiser des valeurs pour une nouvelle partie
         demarrePartie(partie);
@@ -410,14 +455,13 @@ public void joue(Partie partie) {
         Boolean finished;
         finished = false;
         while (!finished) {
-             
+
             // Contrôles globaux du jeu (sortie, ...)
             //1 is for escape key
             if (env.getKey() == 1) {
                 finished = true;
             }
 
-            
             tux.deplace();
 
             // Contrôles des déplacements de Tux (gauche, droite, ...)
@@ -435,32 +479,28 @@ public void joue(Partie partie) {
 
     }
 
-
 // Permet de verifier si la lettre 'letter' entre en collision avec le personnage 'Tux'
- public boolean collision(Lettre letter)
-    {
-        if(distance(letter) > 2)
-        {
+    public boolean collision(Lettre letter) {
+        if (distance(letter) > 2) {
             return false;
-        }
-        else
+        } else {
             return true;
+        }
     }
-    
- // calcul la distance entre 'Tux' et 'Letter'
-    public double distance(Lettre letter)
-    {
+
+    // calcul la distance entre 'Tux' et 'Letter'
+    public double distance(Lettre letter) {
         double x_tux = this.tux.getZ();
         double y_tux = this.tux.getX();
-        
+
         double x_letter = letter.getZ();
         double y_letter = letter.getX();
-        
-        double distance_x =  Math.pow(x_letter - x_tux, 2);
-        double distance_y =  Math.pow(y_letter - y_tux, 2);
+
+        double distance_x = Math.pow(x_letter - x_tux, 2);
+        double distance_y = Math.pow(y_letter - y_tux, 2);
         double distance = Math.sqrt(distance_x + distance_y);
-        
-         return distance;
+
+        return distance;
     }
 
     protected abstract void demarrePartie(Partie partie);
