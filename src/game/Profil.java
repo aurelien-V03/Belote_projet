@@ -5,7 +5,6 @@
  */
 package game;
 
-import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -14,6 +13,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 public class Profil {
 
@@ -62,6 +62,13 @@ public class Profil {
     // ajoute a la liste des partie un nouvelle partie
     public void ajouterPartie(Partie p) {
         this.parties.add(p);
+        
+        // On recupere l'element <partie>
+        Element partieElement = p.getPartie(_doc);
+           
+        // on recupere l'element <parties> ou l'on va inserer <partie>
+       Element profilRacine = (Element)this._doc.getElementsByTagName("parties").item(0);       
+       profilRacine.appendChild(partieElement);
     }
 
     public int getDernierNiveau() {
@@ -122,6 +129,8 @@ public class Profil {
     // et charge le profil 
     public boolean charge(String nom) {
         File f = new File("src/XML/" + nom + ".xml");
+        
+        // Si le fichier nom.xml existe
         if (f.exists()) {
             
             // On recupere les node correspondant a aux attributs

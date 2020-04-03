@@ -46,6 +46,9 @@ public abstract class Jeu2 {
     EnvText textMenuPrincipal2;
     EnvText textMenuPrincipal3;
     EnvText textMenuPrincipal4;
+    
+    EnvText textSecondesRestantes;
+    EnvText textMotAtrouver;
 
 
     public Jeu2() {
@@ -94,6 +97,11 @@ public abstract class Jeu2 {
         textMenuPrincipal2 = new EnvText(env, "2. Créer un nouveau joueur ?", 250, 260);
         textMenuPrincipal3 = new EnvText(env, "3. Sortir du jeu ?", 250, 240);
         textMenuPrincipal4 = new EnvText(env, "4. Ajouter un mot dans le dico ?", 250, 220);
+        
+        
+        textSecondesRestantes = new EnvText(env, "", 250, 220,100,0,255,0,0,0,0);
+        textMotAtrouver = new EnvText(env, "", 250, 240,100,0,255,0,0,0,0);
+ 
     }
 
     /**
@@ -324,16 +332,7 @@ public abstract class Jeu2 {
                     String mot = dictionnaire.getMotDepuisListeNiveaux(toucheNiveau);
 
                     System.out.println("Mot a chercher = " + mot);
-                    /*
-                    char[] mot_caracteres = mot.toCharArray();
-                    int z = 10;
-                    int y = 10;
-                    for (char c : mot_caracteres) {
-                        this.lettres.add(new Lettre(c, z, y));
-                        z += 10;
-                        y += 10;
-                    }
-*/
+                   
                     // .......... dico ...........
                     // crée un nouvelle partie
                     System.out.println("KEY 1");
@@ -343,6 +342,9 @@ public abstract class Jeu2 {
                     joue(partie);
                     // enregistre la partie dans le profil --> enregistre le profil
                     // .......... profil .........
+                    this.profil.ajouterPartie(partie);
+                    this.profil.sauvegarder("src/XML/" + this.getNomJoueur() +".xml");
+                    
                     playTheGame = MENU_VAL.MENU_JOUE;
                     break;
 
@@ -351,22 +353,8 @@ public abstract class Jeu2 {
                 // -----------------------------------------                
                 case Keyboard.KEY_2: // charge une partie existante
 
-                    // demander de fournir une date    (format jj/mm/aaaa)
-                    String regex = "^(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])-[0-9]{4}$";
-                    //Creating a pattern object
-                    Pattern pattern = Pattern.compile(regex);
-                    //Matching the compiled pattern in the String
-                    Matcher matcher;
-                    boolean bool = false;
-
-                    this.textMenuPrincipal1.modifyTextAndDisplay("Date de votre partie : (aaaa/mm/jj)");
-
-                    // recupere la date que l'utilisateur veut
-                    String date = "";
-                    date = this.textMenuPrincipal1.lire(true);
-                       
-
-                    this.textMenuPrincipal1.clean();
+                    // demande a l'utilisateur une date au format YYYY/MM/DD
+                    String date = getDateUtilisateur();
 
                     // tenter de trouver une partie à cette date
                     Partie partieJouable = null;
@@ -439,6 +427,31 @@ public abstract class Jeu2 {
         return playTheGame;
     }
 
+    
+    public String getDateUtilisateur()
+    {
+            String date = "";
+        // demander de fournir une date    (format jj/mm/aaaa)
+                    String regex = "^[0-9]{4}-[0-9]{2}-[0-9]{2}$";
+                    //Creating a pattern object
+                    Pattern pattern = Pattern.compile(regex);
+                    //Matching the compiled pattern in the String
+                    Matcher matcher;
+                    
+                    this.textMenuPrincipal1.modifyTextAndDisplay("Date de votre partie : (aaaa/mm/jj)");
+
+                    // recupere la date que l'utilisateur veut
+                    
+                    do{
+                        date = this.textMenuPrincipal1.lire(true);
+                        matcher = pattern.matcher(date);
+                        
+                    }while(!matcher.matches());
+
+                    this.textMenuPrincipal1.clean();
+                    return date;
+    }
+                    
     // permet au joueur de saisir un niveau entre 1 et 5 
     private int getNiveauChoix() {
         int toucheNiveau = 0;
@@ -450,7 +463,6 @@ public abstract class Jeu2 {
             env.advanceOneFrame();
             System.out.println("touche niveau = " + toucheNiveau);
         }
-
         textMenuJeu1.clean();
         return toucheNiveau;
     }
@@ -460,20 +472,18 @@ public abstract class Jeu2 {
         
         // affiche 5 secondes la lettre a l'ecran 
         Chronometre c = new Chronometre(5000);
-        this.textMenuPrincipal1.modifyTextAndDisplay(partie.getMot());
-        this.textMenuPrincipal2.modifyTextAndDisplay((5 - c.timeSpent()) + " seonces restantes");
+        this.textMotAtrouver.modifyTextAndDisplay("Mot a trouver : " + partie.getMot());
+        this.textSecondesRestantes.modifyTextAndDisplay((5 - c.timeSpent()) + " secondes restantes");
         while (c.remainsTime()) {
             env.advanceOneFrame();
-            this.textMenuPrincipal2.modifyTextAndDisplay((5 - c.timeSpent()) + " seonces restantes");
+            this.textSecondesRestantes.modifyTextAndDisplay((5 - c.timeSpent()) + " secondes restantes");
         }
         
-        textMenuPrincipal1.clean();
-        textMenuPrincipal2.clean();
+        textSecondesRestantes.clean();
+        textMotAtrouver.clean();
         // Instancie un Tux
         this.tux = new Tux(env, room);
         env.addObject(tux);
-
-        
 
         // Ici, on peut initialiser des valeurs pour une nouvelle partie
         demarrePartie(partie);
@@ -494,11 +504,8 @@ public abstract class Jeu2 {
                 finished = true;
             }
 
-          
-            tux.deplace();
-
             // Contrôles des déplacements de Tux (gauche, droite, ...)
-            // ... (sera complété plus tard) ...
+            tux.deplace();
             // Ici, on applique les regles
             appliqueRegles(partie);
 
@@ -509,13 +516,13 @@ public abstract class Jeu2 {
         // Ici on peut calculer des valeurs lorsque la partie est terminée
         terminePartie(partie);
         System.out.println("Partie = " + partie);
-
     }
 
 // Permet de verifier si la lettre 'letter' entre en collision avec le personnage 'Tux'
     public boolean collision(Lettre letter) {
-        if (distance(letter) > 2) {
+        if (distance(letter) >   this.tux.getScale()) {
             return false;
+          
         } else {
             return true;
         }

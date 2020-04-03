@@ -3,6 +3,7 @@ package game;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 /**
  *
@@ -50,15 +51,38 @@ public class Partie {
 
     // cree le bloc XML a partie de doc
     public Element getPartie(Document doc) {
-        return null;
+        // Creer un element <partie> que l'on inserera dans <parties>
+       Element partieElt = doc.createElement("partie");
+       partieElt.setAttribute("date", getDate());
+       partieElt.setAttribute("trouve",String.valueOf(getPourcentageTrouve()));
+       
+       // element <temps>
+       Element temps = doc.createElement("temps");
+       Text textTemps = doc.createTextNode( String.valueOf(getTemps()));
+       temps.appendChild(textTemps);
+       
+      // element <mot>
+       Element mot = doc.createElement("mot");
+       mot.setAttribute("niveau", String.valueOf(getNiveau()));
+       Text motText = doc.createTextNode( getMot());
+       
+       // <partie> += <mot> <temps>
+       mot.appendChild(motText);
+       temps.appendChild(textTemps);
+       
+       partieElt.appendChild(temps);
+       partieElt.appendChild(mot);
+       
+       return partieElt;
     }
 
     public void setTrouve(int LettresRestantes) {
         int tailleMot = mot.toCharArray().length;
         int lettresTrouvees = tailleMot - LettresRestantes;
+        
         System.out.print("taille du mot = " + tailleMot + "\n");
-        System.out.print("trouve du mot = " + lettresTrouvees + "\n");
-        System.out.print("pourcentage du mot = " + lettresTrouvees / tailleMot + "\n");
+        System.out.print("lettre trouve mot = " + lettresTrouvees + "\n");
+        System.out.print("pourcentage du mot = " + (lettresTrouvees / tailleMot)*100 + "\n");
 
     }
 
@@ -69,9 +93,17 @@ public class Partie {
     public int getNiveau() {
         return niveau;
     }
+    
+    public int getPourcentageTrouve(){
+        return this.trouve;
+    }
 
     public String getMot() {
         return this.mot;
+    }
+    
+    public float getTemps(){
+        return this.temps;
     }
 
     public String toString() {

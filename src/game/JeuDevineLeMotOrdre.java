@@ -1,6 +1,8 @@
 
 package game;
 
+import java.util.Random;
+
 /**
  *
  * @author Aurel
@@ -17,20 +19,22 @@ public class JeuDevineLeMotOrdre extends Jeu2{
 
     @Override
     protected void demarrePartie(Partie partie) {
+        
         System.out.println("DEMARRE PARTIE");
-        this.chrono = new Chronometre(20000);
-        
-        
+        // le joueur a 30 secondes
+        this.chrono = new Chronometre(30000);
+           
         char[] mot_caracteres = partie.getMot().toCharArray();
-                    int z = 10;
-                    int y = 10;
+        // genere 1 coordonne [X = [0;100] Y = [0;100] ] sur ces interval
+        Random r = new Random();
+        int z;
+        int y;
                     for (char c : mot_caracteres) {
                         System.out.println("Lettre :"+ c);
-                        this.lettres.add(new Lettre(c, z, y));
-                        z += 10;
-                        y += 10;
+                        z = r.nextInt(101);
+                        y = r.nextInt(101);
+                        this.lettres.add(new Lettre(c, z, y));                 
                     }
-        
        this.nbLettresRestantes = super.lettres.size();
     }
 
@@ -47,12 +51,21 @@ public class JeuDevineLeMotOrdre extends Jeu2{
         }
         // il reste du temps
         else{
+            // Il reste des lettres a trouver
+            if(this.nbLettresRestantes != 0)
+            {
             boolean trouveLettre = tuxTrouveLettre();
             Lettre nextCarac = super.lettres.get(super.lettres.size() - this.nbLettresRestantes );
             System.out.print("[lettre : " + nextCarac.toString() + "] [distance ("+this.distance(nextCarac)+" ] [" + trouveLettre + ") temps("+this.chrono.remainsTime()+") \n");
-            if(trouveLettre)
+                if(trouveLettre)
+                {
+                    this.nbLettresRestantes--;
+                }
+            }
+            // Il n'y a plus de lettre a trouver
+            else
             {
-                this.nbLettresRestantes--;
+                System.out.print("PLUS DE LETTRES");
             }
           
         }
