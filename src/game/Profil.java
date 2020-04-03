@@ -81,7 +81,11 @@ public class Profil {
 
     // sauvegarde le document DOM dans un fichier XML
     public void sauvegarder(String filename) {
-
+        System.out.println("Sauvegarde de la partie");
+        this.toXML(filename);
+        
+        
+        
     }
 
     /// Takes a date in XML format (i.e. ????-??-??) and returns a date

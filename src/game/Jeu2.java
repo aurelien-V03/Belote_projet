@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -44,6 +45,8 @@ public abstract class Jeu2 {
     EnvText textMenuPrincipal1;
     EnvText textMenuPrincipal2;
     EnvText textMenuPrincipal3;
+    EnvText textMenuPrincipal4;
+
 
     public Jeu2() {
         this.lettres = new ArrayList<Lettre>();
@@ -73,12 +76,12 @@ public abstract class Jeu2 {
         System.out.println("Chargement du dico : ");
         dictionnaire = new Dico("");
         try {
-            dictionnaire.lireDictionnaireDOM("src/game/", "dictionnaire.xml");
-        } catch (SAXException ex) {
-            Logger.getLogger(TestDico.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+           // dictionnaire.lireDictionnaireDOM("src/XML/", "dictionnaire.xml");
+            dictionnaire.lireDictionnaire();
+        } catch (Exception ex) {
             Logger.getLogger(TestDico.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
 
         // Textes affichés à l'écran
         textMenuQuestion = new EnvText(env, "Voulez vous ?", 200, 300);
@@ -90,6 +93,7 @@ public abstract class Jeu2 {
         textMenuPrincipal1 = new EnvText(env, "1. Charger un profil de joueur existant ?", 250, 280);
         textMenuPrincipal2 = new EnvText(env, "2. Créer un nouveau joueur ?", 250, 260);
         textMenuPrincipal3 = new EnvText(env, "3. Sortir du jeu ?", 250, 240);
+        textMenuPrincipal4 = new EnvText(env, "4. Ajouter un mot dans le dico ?", 250, 220);
     }
 
     /**
@@ -191,14 +195,14 @@ public abstract class Jeu2 {
         textMenuPrincipal1.display();
         textMenuPrincipal2.display();
         textMenuPrincipal3.display();
+        textMenuPrincipal4.display();
 
-        // vérifie qu'une touche 1, 2 ou 3 est pressée
+
+        // vérifie qu'une touche 1, 2 , 3 ou 4 est pressée
         int touche = 0;
-        while (!(touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3)) {
+        while (!(touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_4)) {
             touche = env.getKey();
             env.advanceOneFrame();
-            System.out.println("touche = " + touche);
-
         }
 
         // efface le menu
@@ -206,6 +210,7 @@ public abstract class Jeu2 {
         textMenuPrincipal1.clean();
         textMenuPrincipal2.clean();
         textMenuPrincipal3.clean();
+        textMenuPrincipal4.clean();
 
         // et décide quoi faire en fonction de la touche pressée
         switch (touche) {
@@ -248,6 +253,24 @@ public abstract class Jeu2 {
             case Keyboard.KEY_3:
                 // le choix est de sortir du jeu (quitter l'application)
                 choix = MENU_VAL.MENU_SORTIE;
+                break;
+                // -------------------------------------
+            // Touche 4 : Permet au joueur d'ajouter un mot et son niveau
+            // -------------------------------------
+            case Keyboard.KEY_4:
+                // le choix est de sortir du jeu (quitter l'application)
+                System.out.println("*****AJOUT D'UNE LETTRE******");
+                Scanner sc = new Scanner(System.in);
+                 System.out.println("mot: ");
+                String mot = sc.nextLine();
+                System.out.println("niveau: ");
+                int niveau = sc.nextInt();
+                EditeurDico editDico = new EditeurDico();
+                editDico.lireDOM("src/XML/dictionnaire.xml");
+                editDico.ajouterMot(mot, niveau);
+                editDico.ecrireDOM("src/XML/dictionnaire.xml");
+                System.out.print("Ajout de  : " + mot +  " " + niveau);
+                break;
         }
         return choix;
     }
@@ -301,6 +324,7 @@ public abstract class Jeu2 {
                     String mot = dictionnaire.getMotDepuisListeNiveaux(toucheNiveau);
 
                     System.out.println("Mot a chercher = " + mot);
+                    /*
                     char[] mot_caracteres = mot.toCharArray();
                     int z = 10;
                     int y = 10;
@@ -309,7 +333,7 @@ public abstract class Jeu2 {
                         z += 10;
                         y += 10;
                     }
-
+*/
                     // .......... dico ...........
                     // crée un nouvelle partie
                     System.out.println("KEY 1");
@@ -347,9 +371,12 @@ public abstract class Jeu2 {
                     // tenter de trouver une partie à cette date
                     Partie partieJouable = null;
                     boolean partieJouableFound = false;
+                    int i = 0;
                     
-                    for(Partie p : this.profil.getParties())
+                    while(i < this.profil.getParties().size() && !partieJouableFound)
                     {
+                        Partie p = this.profil.getParties().get(i);
+                        
                         try{
                             SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd");  
                             Date datePartie = dateformat.parse(p.getDate());
@@ -359,7 +386,7 @@ public abstract class Jeu2 {
                             {
                               System.out.println("DATE  JOUR = " + datePartie.getTime() + " --- "  + dateSouhaitee.getTime());
                                System.out.println("\t\tPartie = " + p);
-                                partieJouable = p;
+                               partieJouable = p;
                                 partieJouableFound = true;
                             }
                             // jour different
@@ -372,13 +399,13 @@ public abstract class Jeu2 {
                         {
                             System.out.println(e.getMessage());
                         }
+                        i++;
 
                     }
               
                     // Si partie trouvée, recupère le mot de la partie existante, sinon ???
                     if(partieJouableFound)
                     {
-                        
                     }
                     else
                     {
@@ -386,11 +413,12 @@ public abstract class Jeu2 {
                     }
                     
                     
-                    
+                    System.out.println("PARTIE Jeu = " + partieJouable);
                     // joue
                     joue(partieJouable);
                     // enregistre la partie dans le profil --> enregistre le profil
-                    // .......... profil ........
+                    System.out.print("Enregistrement ");
+                    this.profil.sauvegarder("enregistrer.xml");
                     playTheGame = MENU_VAL.MENU_JOUE;
                     break;
 
@@ -428,7 +456,8 @@ public abstract class Jeu2 {
     }
 
     public void joue(Partie partie) {
-
+        System.out.println("joue partie : " + partie);
+        
         // affiche 5 secondes la lettre a l'ecran 
         Chronometre c = new Chronometre(5000);
         this.textMenuPrincipal1.modifyTextAndDisplay(partie.getMot());
@@ -436,20 +465,23 @@ public abstract class Jeu2 {
         while (c.remainsTime()) {
             env.advanceOneFrame();
             this.textMenuPrincipal2.modifyTextAndDisplay((5 - c.timeSpent()) + " seonces restantes");
-
         }
+        
         textMenuPrincipal1.clean();
         textMenuPrincipal2.clean();
         // Instancie un Tux
         this.tux = new Tux(env, room);
         env.addObject(tux);
 
-        for (Lettre l : lettres) {
-            env.addObject(l);
-        }
+        
 
         // Ici, on peut initialiser des valeurs pour une nouvelle partie
         demarrePartie(partie);
+        
+        // On affiche les lettres dans l'environnement     
+        for (Lettre l : lettres) {
+            env.addObject(l);
+        } 
         tux.deplace();
         // Boucle de jeu
         Boolean finished;
@@ -462,6 +494,7 @@ public abstract class Jeu2 {
                 finished = true;
             }
 
+          
             tux.deplace();
 
             // Contrôles des déplacements de Tux (gauche, droite, ...)

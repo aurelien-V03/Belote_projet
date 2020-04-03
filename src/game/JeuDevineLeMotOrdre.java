@@ -19,13 +19,24 @@ public class JeuDevineLeMotOrdre extends Jeu2{
     protected void demarrePartie(Partie partie) {
         System.out.println("DEMARRE PARTIE");
         this.chrono = new Chronometre(20000);
-        this.nbLettresRestantes = super.lettres.size();
         
+        
+        char[] mot_caracteres = partie.getMot().toCharArray();
+                    int z = 10;
+                    int y = 10;
+                    for (char c : mot_caracteres) {
+                        System.out.println("Lettre :"+ c);
+                        this.lettres.add(new Lettre(c, z, y));
+                        z += 10;
+                        y += 10;
+                    }
+        
+       this.nbLettresRestantes = super.lettres.size();
     }
 
     @Override
     protected void appliqueRegles(Partie partie) {
-                System.out.println("APPLIQUE PARTIE");
+       System.out.println("APPLIQUE PARTIE");
 
         // Le temps est ecoule
         if(chrono.remainsTime() == false)
@@ -52,9 +63,10 @@ public class JeuDevineLeMotOrdre extends Jeu2{
          System.out.println("TERMINE PARTIE");
         partie.setTrouve(nbLettresRestantes);
         partie.setTemps(chrono.timeSpent());
+    
     }
     
-    private boolean tuxTrouveLettre(){
+    private boolean tuxTrouveLettre(){              
         Lettre courante = super.lettres.get(super.lettres.size() - this.nbLettresRestantes);
         if(super.collision(courante))
         {

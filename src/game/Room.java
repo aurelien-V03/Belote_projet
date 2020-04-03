@@ -5,6 +5,16 @@
  */
 package game;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+
 /**
  *
  * @author valleta
@@ -30,7 +40,59 @@ public class Room {
         textureEast = "textures/floor/clover1.png";
         textureWest = "textures/floor/clover1.png";
         
+        try {
+           
+        // On charge le fichier plateau.xml
+        File xmlFile = new File("src/XML/plateau.xml");   
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = factory.newDocumentBuilder();
+        Document docPlateau = dBuilder.parse(xmlFile);
+        docPlateau.getDocumentElement().normalize();
+      
+        // On recupere les nodes 
+        Element heightNode = (Element)docPlateau.getElementsByTagName("height").item(0);
+        Element WidthNode = (Element)docPlateau.getElementsByTagName("width").item(0);
+        Element depthtNode = (Element)docPlateau.getElementsByTagName("depth").item(0);
+
+        Element textureBottomtNode = (Element)docPlateau.getElementsByTagName("textureBottom").item(0);
+        Element textureEastNode = (Element)docPlateau.getElementsByTagName("textureEast").item(0);
+        Element textureWestNode = (Element)docPlateau.getElementsByTagName("textureWest").item(0);
+        Element textureNorthNode = (Element)docPlateau.getElementsByTagName("textureNorth").item(0);
+
+        // on mets les valeurs aux attributss
+        int depthValue = Integer.parseInt(depthtNode.getTextContent());
+        int widthValue = Integer.parseInt(WidthNode.getTextContent());
+        int heightValue = Integer.parseInt(heightNode.getTextContent());
         
+        String bottomValue = textureBottomtNode.getTextContent();
+        String northValue = textureNorthNode.getTextContent();
+        String eastValue = textureEastNode.getTextContent();
+        String westValue = textureWestNode.getTextContent();
+        
+        this.depth = depthValue;
+        this.height = heightValue;
+        this.width = widthValue;
+        this.textureBottom = bottomValue;
+        this.textureEast = eastValue;
+        this.textureNorth = northValue;
+        this.textureWest = westValue;
+        
+        
+        System.out.println("height = " +heightNode.getTextContent());
+        System.out.println("width = " +WidthNode.getTextContent());
+        System.out.println("depth = " +depthtNode.getTextContent());
+        System.out.println("Bottom = " +textureBottomtNode.getTextContent());
+        System.out.println("north = " +textureNorthNode.getTextContent());
+        System.out.println("east = " +textureEastNode.getTextContent());
+        System.out.println("west = " +textureWestNode.getTextContent());
+
+        
+
+            
+            
+        } catch (Exception ex) {
+            System.out.println("Erreur parseur plateau XML");
+        } 
             
     }
 
