@@ -6,6 +6,7 @@
 package game;
 
 import env3d.Env;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public abstract class Jeu2 {
     EnvText textMenuPrincipal3;
     EnvText textMenuPrincipal4;
     
+    EnvText textChoixNiveau;
     EnvText textSecondesRestantes;
     EnvText textMotAtrouver;
 
@@ -98,6 +100,7 @@ public abstract class Jeu2 {
         textMenuPrincipal3 = new EnvText(env, "3. Sortir du jeu ?", 250, 240);
         textMenuPrincipal4 = new EnvText(env, "4. Ajouter un mot dans le dico ?", 250, 220);
         
+        textChoixNiveau = new EnvText(env, "Choisir niveau du mot : \n\t\t\t\t-1\n\t\t\t\t-2\n\t\t\t\t-3\n\t\t\t\t-4\n\t\t\t\t-5", 250, 220);
         
         textSecondesRestantes = new EnvText(env, "", 250, 220,100,0,255,0,0,0,0);
         textMotAtrouver = new EnvText(env, "", 250, 240,100,0,255,0,0,0,0);
@@ -229,17 +232,18 @@ public abstract class Jeu2 {
                 // demande le nom du joueur existant
                 nomJoueur = getNomJoueur();
                 System.out.println("Nom du joueur choisi : " + nomJoueur);
+                
                 // charge le profil de ce joueur si possible
-                if (profil.charge(nomJoueur)) {
+                File f = new File("src/XML/" + nomJoueur + ".xml");
+                if (f.exists()) {
+                    this.profil = new Profil("src/XML/" +nomJoueur+".xml");
                     // lance le menu de jeu et récupère le choix à la sortie de ce menu de jeu
                     System.out.println("Nom du joueur VALIDE : " + nomJoueur + "PROFIL = " + profil);
                     choix = menuJeu();
-
                 } else {
                     // sinon continue (et boucle dans ce menu)
                     System.out.println("Nom du joueur NON VALIDE : " + nomJoueur);
                     choix = MENU_VAL.MENU_CONTINUE;
-
                 }
                 break;
 
@@ -249,8 +253,20 @@ public abstract class Jeu2 {
             case Keyboard.KEY_2:
                 // demande le nom du nouveau joueur
                 nomJoueur = getNomJoueur();
+                // On creer un fichier nomJoueur.xml pour le nouveau joueur              
+                File profileFile = new File("src/XML/"+nomJoueur + ".xml");
+                if(!profileFile.exists()){
+                        try {
+                            System.out.println("PROFILE DISPO ! ");
+                            profileFile.createNewFile();
+                            
+                            
+                        } catch (IOException ex) {
+                            Logger.getLogger(Jeu2.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                } 
                 // crée un profil avec le nom d'un nouveau joueur
-                profil = new Profil(nomJoueur);
+                profil = new Profil(nomJoueur,"");
                 // lance le menu de jeu et récupère le choix à la sortie de ce menu de jeu
                 choix = menuJeu();
                 break;
@@ -269,15 +285,15 @@ public abstract class Jeu2 {
                 // le choix est de sortir du jeu (quitter l'application)
                 System.out.println("*****AJOUT D'UNE LETTRE******");
                 Scanner sc = new Scanner(System.in);
-                 System.out.println("mot: ");
+                 System.out.println("Saisissez votre mot: ");
                 String mot = sc.nextLine();
-                System.out.println("niveau: ");
+                System.out.println("niveau du mot : ");
                 int niveau = sc.nextInt();
                 EditeurDico editDico = new EditeurDico();
                 editDico.lireDOM("src/XML/dictionnaire.xml");
                 editDico.ajouterMot(mot, niveau);
                 editDico.ecrireDOM("src/XML/dictionnaire.xml");
-                System.out.print("Ajout de  : " + mot +  " " + niveau);
+                System.out.print("Ajout de  : " + mot +  " ( niveau = " + niveau +") dans le dictionnaire\n\n");
                 break;
         }
         return choix;
@@ -335,15 +351,17 @@ public abstract class Jeu2 {
                    
                     // .......... dico ...........
                     // crée un nouvelle partie
-                    System.out.println("KEY 1");
-
-                    partie = new Partie(java.time.LocalDate.now().toString(), mot, 1);
+                    partie = new Partie(java.time.LocalDate.now().toString(), mot, toucheNiveau);
                     // joue
                     joue(partie);
                     // enregistre la partie dans le profil --> enregistre le profil
                     // .......... profil .........
+                    
+                    
+                    
+                    System.out.println("nom profil = " + this.profil.getNom());
                     this.profil.ajouterPartie(partie);
-                    this.profil.sauvegarder("src/XML/" + this.getNomJoueur() +".xml");
+                    this.profil.sauvegarder("src/XML/" + this.profil.getNom() +".xml");
                     
                     playTheGame = MENU_VAL.MENU_JOUE;
                     break;
@@ -363,9 +381,10 @@ public abstract class Jeu2 {
                     
                     while(i < this.profil.getParties().size() && !partieJouableFound)
                     {
-                        Partie p = this.profil.getParties().get(i);
-                        
+                        // Partie au rang i
+                        Partie p = this.profil.getParties().get(i);                     
                         try{
+                            // format de la date 
                             SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd");  
                             Date datePartie = dateformat.parse(p.getDate());
                             Date dateSouhaitee = dateformat.parse(date);
@@ -394,20 +413,18 @@ public abstract class Jeu2 {
                     // Si partie trouvée, recupère le mot de la partie existante, sinon ???
                     if(partieJouableFound)
                     {
+                        System.out.println("PARTIE Jeu = " + partieJouable);
+                        // joue
+                        joue(partieJouable);
+                        // enregistre la partie dans le profil --> enregistre le profil
+                        System.out.print("Enregistrement ");
+                        this.profil.sauvegarder("enregistrer.xml");
+                        playTheGame = MENU_VAL.MENU_JOUE;
                     }
                     else
                     {
-                        
+                        System.out.println("PARTIE INCONNUE A LA DATE : " +date);
                     }
-                    
-                    
-                    System.out.println("PARTIE Jeu = " + partieJouable);
-                    // joue
-                    joue(partieJouable);
-                    // enregistre la partie dans le profil --> enregistre le profil
-                    System.out.print("Enregistrement ");
-                    this.profil.sauvegarder("enregistrer.xml");
-                    playTheGame = MENU_VAL.MENU_JOUE;
                     break;
 
                 // -----------------------------------------
@@ -438,7 +455,7 @@ public abstract class Jeu2 {
                     //Matching the compiled pattern in the String
                     Matcher matcher;
                     
-                    this.textMenuPrincipal1.modifyTextAndDisplay("Date de votre partie : (aaaa/mm/jj)");
+                    this.textMenuPrincipal1.modifyTextAndDisplay("Date de votre partie : (aaaa/mm/jj) : ");
 
                     // recupere la date que l'utilisateur veut
                     
@@ -455,7 +472,7 @@ public abstract class Jeu2 {
     // permet au joueur de saisir un niveau entre 1 et 5 
     private int getNiveauChoix() {
         int toucheNiveau = 0;
-        textMenuJeu1.modifyTextAndDisplay("Choix du niveau (1-5) : ");
+        this.textChoixNiveau.display();
         toucheNiveau = 0;
         while (toucheNiveau < 1 || toucheNiveau > 5) {
             toucheNiveau = env.getKey();
@@ -463,7 +480,7 @@ public abstract class Jeu2 {
             env.advanceOneFrame();
             System.out.println("touche niveau = " + toucheNiveau);
         }
-        textMenuJeu1.clean();
+          this.textChoixNiveau.clean();
         return toucheNiveau;
     }
 
@@ -490,8 +507,9 @@ public abstract class Jeu2 {
         
         // On affiche les lettres dans l'environnement     
         for (Lettre l : lettres) {
-            env.addObject(l);
+            env.addObject(l);          
         } 
+        
         tux.deplace();
         // Boucle de jeu
         Boolean finished;
@@ -513,6 +531,13 @@ public abstract class Jeu2 {
             env.advanceOneFrame();
         }
 
+         // On enleve les lettres dans l'environnement (elles disparaissent de l'ecran)    
+        for (Lettre l : lettres) {
+            env.removeObject(l);          
+        } 
+        // on vide la tableau de lettres au cas ou le joueur veut rejouer un partie
+        lettres.clear();
+        
         // Ici on peut calculer des valeurs lorsque la partie est terminée
         terminePartie(partie);
         System.out.println("Partie = " + partie);

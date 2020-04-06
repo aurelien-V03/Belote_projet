@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<dictionnaire xmlns="http://www.dictionnaire.fr" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dictionnaire.fr dictionnaire.xsd">
+<dictionnaire xmlns="http://www.dictionnaire.fr" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://www.dictionnaire.fr dictionnaire.xsd">
     <mot niveau="1">animals</mot>
     <mot niveau="1">biche</mot>
     <mot niveau="1">souris</mot>
@@ -13,4 +15,5 @@
     <mot niveau="5">extensif</mot>
     <mot niveau="5">contagieux</mot>
     <mot niveau="3">antilope</mot>
+<mot niveau="1">malcolm</mot>
 </dictionnaire>

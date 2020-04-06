@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <profil xmlns="http://myGame/tux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://myGame/tux ./profil.xsd">
-    <nom>a</nom>
+    <nom>Alban</nom>
     <avatar>conan.jpg</avatar>
     <anniversaire>2006-05-08</anniversaire>
     
@@ -62,44 +62,8 @@
             <mot niveau="1">biche</mot>
         </partie>
     <partie date="2020-04-06" trouve="0">
-            <temps>3.0</temps>
-            <mot niveau="1">voiture</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
             <temps>2.0</temps>
-            <mot niveau="1">biche</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>3.0</temps>
             <mot niveau="1">esturgeon</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>5.0</temps>
-            <mot niveau="1">esturgeon</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>7.0</temps>
-            <mot niveau="1">voiture</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>3.0</temps>
-            <mot niveau="1">biche</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>3.0</temps>
-            <mot niveau="4">remorque</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>2.0</temps>
-            <mot niveau="2">esturgeon</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>3.0</temps>
-            <mot niveau="1">souris</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>2.0</temps>
-            <mot niveau="1">voiture</mot>
         </partie>
     </parties>
 </profil>

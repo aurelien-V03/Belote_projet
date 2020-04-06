@@ -29,15 +29,36 @@ public class Profil {
         this.nom = nom;
         this.dateNaissance = dateNaissance;
         this.parties = new ArrayList<Partie>();
-
+        
     }
 
     // Cree un DOM à partir d'un fichier XML
     public Profil(String nomFichier) {
-         this.parties = new ArrayList<Partie>();
+        this.parties = new ArrayList<Partie>();
         _doc = fromXML(nomFichier);
-        // parsing à compléter
-        // ?!#?!
+
+        Element name = (Element) this._doc.getElementsByTagName("nom").item(0);
+        Element avatar = (Element) this._doc.getElementsByTagName("avatar").item(0);
+        Element anniversaire = (Element) this._doc.getElementsByTagName("anniversaire").item(0);
+        NodeList listeParties = this._doc.getElementsByTagName("partie");
+
+        String nameValue = name.getTextContent();
+        String avatarValue = avatar.getTextContent();
+        String anniversaireValue = anniversaire.getTextContent();
+
+        // initialisation des attributs de la classe
+        
+        this.avatar = avatarValue;
+        this.nom = nameValue;
+        this.dateNaissance = anniversaireValue;
+
+        // On ajoute chaque partie
+        for (int i = 0; i < listeParties.getLength(); i++) {
+            Element partieNode = (Element) listeParties.item(i);
+            Partie p = new Partie(partieNode);
+            this.parties.add(p);
+        }
+
     }
 
     // Sauvegarde un DOM en XML
@@ -62,13 +83,13 @@ public class Profil {
     // ajoute a la liste des partie un nouvelle partie
     public void ajouterPartie(Partie p) {
         this.parties.add(p);
-        
+
         // On recupere l'element <partie>
         Element partieElement = p.getPartie(_doc);
-           
+
         // on recupere l'element <parties> ou l'on va inserer <partie>
-       Element profilRacine = (Element)this._doc.getElementsByTagName("parties").item(0);       
-       profilRacine.appendChild(partieElement);
+        Element profilRacine = (Element) this._doc.getElementsByTagName("parties").item(0);
+        profilRacine.appendChild(partieElement);
     }
 
     public int getDernierNiveau() {
@@ -90,9 +111,7 @@ public class Profil {
     public void sauvegarder(String filename) {
         System.out.println("Sauvegarde de la partie");
         this.toXML(filename);
-        
-        
-        
+
     }
 
     /// Takes a date in XML format (i.e. ????-??-??) and returns a date
@@ -124,22 +143,21 @@ public class Profil {
 
         return date;
     }
-
+/*
     // retourne vrai si le fichier nom.xml existe 
     // et charge le profil 
     public boolean charge(String nom) {
         File f = new File("src/XML/" + nom + ".xml");
-        
+
         // Si le fichier nom.xml existe
         if (f.exists()) {
-            
             // On recupere les node correspondant a aux attributs
             this._doc = fromXML("src/XML/" + nom + ".xml");
             Element name = (Element) this._doc.getElementsByTagName("nom").item(0);
             Element avatar = (Element) this._doc.getElementsByTagName("avatar").item(0);
-            Element anniversaire = (Element) this._doc.getElementsByTagName("anniversaire").item(0);          
+            Element anniversaire = (Element) this._doc.getElementsByTagName("anniversaire").item(0);
             NodeList listeParties = this._doc.getElementsByTagName("partie");
-            
+
             String nameValue = name.getTextContent();
             String avatarValue = avatar.getTextContent();
             String anniversaireValue = anniversaire.getTextContent();
@@ -147,11 +165,10 @@ public class Profil {
             this.avatar = avatarValue;
             this.nom = nameValue;
             this.dateNaissance = anniversaireValue;
-            
+
             // On ajoute chaque partie
-            for(int i = 0 ;i <listeParties.getLength(); i++)
-            {
-                Element partieNode = (Element)listeParties.item(i);
+            for (int i = 0; i < listeParties.getLength(); i++) {
+                Element partieNode = (Element) listeParties.item(i);
                 Partie p = new Partie(partieNode);
                 this.parties.add(p);
             }
@@ -160,10 +177,13 @@ public class Profil {
             return false;
         }
     }
-
+*/
     public ArrayList<Partie> getParties() {
         return parties;
     }
-    
+
+    public String getNom() {
+        return nom;
+    }
 
 }
