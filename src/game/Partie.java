@@ -11,9 +11,15 @@ import org.w3c.dom.Text;
  */
 public class Partie {
 
+    // condition d'arret du jeu si l'utilisateur trouve toutes les lettres
+    private boolean motTrouve = true;
+    // condition d'arret du jeu si l'utilisateur met trop de temps a repondre
+    private boolean tempsDispo = true;
+    
     private String date;
     private String mot;
     private int niveau;
+    
 
     // le % de lettres trouvees a la fin de la partie
     private int trouve;
@@ -76,14 +82,17 @@ public class Partie {
        return partieElt;
     }
 
+    // Methode utilisee par terminePartie()
+    // elle attribut a l'attribut 'trouve' le pourcentage de lettres trouvees
+    // sur le total des lettres du mot a chercher 
     public void setTrouve(int LettresRestantes) {
         int tailleMot = mot.toCharArray().length;
         int lettresTrouvees = tailleMot - LettresRestantes;
-        
+        float pourcentage = ((float)lettresTrouvees / (float)tailleMot)*100 ;
         System.out.print("taille du mot = " + tailleMot + "\n");
         System.out.print("lettre trouve mot = " + lettresTrouvees + "\n");
-        System.out.print("pourcentage du mot = " + (lettresTrouvees / tailleMot)*100 + "\n");
-
+        System.out.print("pourcentage du mot = " + (int)pourcentage + "\n");
+        this.trouve = (int)pourcentage;
     }
 
     public void setTemps(int temps) {
@@ -107,12 +116,29 @@ public class Partie {
     }
 
     public String toString() {
-        return "Partie : [Mot = " + this.mot + "] [Temps = " + temps + "]  [niveau  = " + this.niveau + "] [date = " + this.date + "] [% =  " + this.trouve + "]";
+        return "Partie : [Mot = " + this.mot + "] [Temps = " + temps + "]  [niveau  = " + this.niveau + "] [date = " + this.date + "] [% =  " + this.getPourcentageTrouve() + "]";
     }
 
     public String getDate() {
         return date;
     }
+
+    public boolean isMotTrouve() {
+        return motTrouve;
+    }
+
+    public void setMotTrouve(boolean motTrouve) {
+        this.motTrouve = motTrouve;
+    }
+
+    public boolean isTempsDispo() {
+        return tempsDispo;
+    }
+
+    public void setTempsDispo(boolean tempsDispo) {
+        this.tempsDispo = tempsDispo;
+    }
+    
     
    
 }

@@ -28,6 +28,8 @@ public class Profil {
     public Profil(String nom, String dateNaissance) {
         this.nom = nom;
         this.dateNaissance = dateNaissance;
+        this.avatar = "";
+       
         this.parties = new ArrayList<Partie>();
         
     }
@@ -111,7 +113,6 @@ public class Profil {
     public void sauvegarder(String filename) {
         System.out.println("Sauvegarde de la partie");
         this.toXML(filename);
-
     }
 
     /// Takes a date in XML format (i.e. ????-??-??) and returns a date
