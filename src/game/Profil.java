@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package game;
 
 import java.io.File;
@@ -29,9 +24,7 @@ public class Profil {
         this.nom = nom;
         this.dateNaissance = dateNaissance;
         this.avatar = "";
-       
         this.parties = new ArrayList<Partie>();
-        
     }
 
     // Cree un DOM à partir d'un fichier XML
@@ -94,11 +87,13 @@ public class Profil {
         profilRacine.appendChild(partieElement);
     }
 
+    
+    // Retourne le niveau correspondant à la derniere partie
     public int getDernierNiveau() {
         int dernierNiveau = 0;
         // récupère la liste des parties
         NodeList listeParties = _doc.getElementsByTagName("partie");
-        System.out.println("Nombre de partie = " + listeParties.getLength());
+        // Element de la derniere partie
         Element lastPartie = (Element) listeParties.item(listeParties.getLength() - 1);
         Node mot = lastPartie.getElementsByTagName("mot").item(0);
         dernierNiveau = Integer.parseInt(mot.getAttributes().getNamedItem("niveau").getNodeValue());
@@ -111,7 +106,8 @@ public class Profil {
 
     // sauvegarde le document DOM dans un fichier XML
     public void sauvegarder(String filename) {
-        System.out.println("Sauvegarde de la partie");
+        
+        System.out.println("Sauvegarde de la partie dans " + filename);
         this.toXML(filename);
     }
 
@@ -144,41 +140,8 @@ public class Profil {
 
         return date;
     }
-/*
-    // retourne vrai si le fichier nom.xml existe 
-    // et charge le profil 
-    public boolean charge(String nom) {
-        File f = new File("src/XML/" + nom + ".xml");
 
-        // Si le fichier nom.xml existe
-        if (f.exists()) {
-            // On recupere les node correspondant a aux attributs
-            this._doc = fromXML("src/XML/" + nom + ".xml");
-            Element name = (Element) this._doc.getElementsByTagName("nom").item(0);
-            Element avatar = (Element) this._doc.getElementsByTagName("avatar").item(0);
-            Element anniversaire = (Element) this._doc.getElementsByTagName("anniversaire").item(0);
-            NodeList listeParties = this._doc.getElementsByTagName("partie");
-
-            String nameValue = name.getTextContent();
-            String avatarValue = avatar.getTextContent();
-            String anniversaireValue = anniversaire.getTextContent();
-
-            this.avatar = avatarValue;
-            this.nom = nameValue;
-            this.dateNaissance = anniversaireValue;
-
-            // On ajoute chaque partie
-            for (int i = 0; i < listeParties.getLength(); i++) {
-                Element partieNode = (Element) listeParties.item(i);
-                Partie p = new Partie(partieNode);
-                this.parties.add(p);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-*/
+    
     public ArrayList<Partie> getParties() {
         return parties;
     }

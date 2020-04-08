@@ -20,10 +20,11 @@ public class JeuDevineLeMotOrdre extends Jeu {
     @Override
     protected void demarrePartie(Partie partie) {
         System.out.println("DEMARRE PARTIE");
-        this.textSecondesRestantes.moveAndDisplay(200, 400);
+        
         // le joueur a 30 secondes pour trouver le mot
         this.chrono = new Chronometre(30000);
 
+        
         char[] mot_caracteres = partie.getMot().toCharArray();
         // genere 1 coordonne [X = [0;100] Y = [0;100] ] sur ces interval
         Random r = new Random();
@@ -39,11 +40,9 @@ public class JeuDevineLeMotOrdre extends Jeu {
 
     @Override
     protected void appliqueRegles(Partie partie) {
-        super.textSecondesRestantes.modifyTextAndDisplay("Temps restant : " + String.valueOf(this.chrono.getSeconds() -this.chrono.timeSpent()));
-        System.out.println("APPLIQUE PARTIE");
+         super.timeInGame.modifyTextAndDisplay("Secondes restantes : " + (this.chrono.getSeconds() -  this.chrono.timeSpent()) );
         // Le temps est ecoule
         if (chrono.remainsTime() == false) {
-            System.out.println("JEU TERMINE" + partie);
             this.chrono.stop();
             partie.setTempsDispo(false); 
 
@@ -51,15 +50,15 @@ public class JeuDevineLeMotOrdre extends Jeu {
         else {
             // Il reste des lettres a trouver
             if (this.nbLettresRestantes != 0) {
+               super.nextLetterToFind.modifyTextAndDisplay("Lettre suivante : "  + super.lettres.get(super.lettres.size() - this.nbLettresRestantes) );
                 boolean trouveLettre = tuxTrouveLettre();
                 Lettre nextCarac = super.lettres.get(super.lettres.size() - this.nbLettresRestantes);
-                System.out.print("[lettre : " + nextCarac.toString() + "] [distance (" + this.distance(nextCarac) + " ] [" + trouveLettre + ") temps(" + this.chrono.remainsTime() + ") \n");
+               // System.out.print("[lettre : " + nextCarac.toString() + "] [distance (" + this.distance(nextCarac) + " ] [" + trouveLettre + ") temps(" + this.chrono.remainsTime() + ") \n");
                 if (trouveLettre) {
                     this.nbLettresRestantes--;
                 }
             } // Il n'y a plus de lettre a trouver
             else {
-                System.out.print("PLUS DE LETTRES");
                 partie.setMotTrouve(false);
             }
 
@@ -70,8 +69,14 @@ public class JeuDevineLeMotOrdre extends Jeu {
     @Override
     protected void terminePartie(Partie partie) {
         System.out.println("TERMINE PARTIE");
+       
+        // On recupere les valeurs de la partie
         partie.setTrouve(nbLettresRestantes);
         partie.setTemps(chrono.timeSpent());
+        
+        // On efface les champs de texte de l'ecran
+        this.timeInGame.modifyTextAndDisplay("");
+        this.nextLetterToFind.modifyTextAndDisplay("");
     }
 
     // Renvoie vrai si le personnage Tux est en contact avec la lettres qu'il doit trouver

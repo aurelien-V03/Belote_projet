@@ -6,6 +6,7 @@
 package game;
 
 import env3d.Env;
+import game.XMLUtil.DocumentTransform;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -19,6 +20,17 @@ import java.util.regex.Pattern;
 import org.lwjgl.input.Keyboard;
 import org.xml.sax.SAXException;
 import test.TestDico;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import java.io.File;
+import org.w3c.dom.Text;
 
 public abstract class Jeu {
 
@@ -47,11 +59,15 @@ public abstract class Jeu {
     EnvText textMenuPrincipal2;
     EnvText textMenuPrincipal3;
     EnvText textMenuPrincipal4;
-    
+
     EnvText textChoixNiveau;
     EnvText textSecondesRestantes;
     EnvText textMotAtrouver;
-   
+
+    // texte afficher en jeux
+    EnvText timeInGame;
+    EnvText nextLetterToFind;
+    EnvText savePartieInFile;
 
     public Jeu() {
         this.lettres = new ArrayList<Lettre>();
@@ -81,12 +97,11 @@ public abstract class Jeu {
         System.out.println("Chargement du dico : ");
         dictionnaire = new Dico("");
         try {
-           // dictionnaire.lireDictionnaireDOM("src/XML/", "dictionnaire.xml");
+            // dictionnaire.lireDictionnaireDOM("src/XML/", "dictionnaire.xml");
             dictionnaire.lireDictionnaire();
         } catch (Exception ex) {
             Logger.getLogger(TestDico.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
 
         // Textes affichés à l'écran
         textMenuQuestion = new EnvText(env, "Voulez vous ?", 200, 300);
@@ -98,13 +113,16 @@ public abstract class Jeu {
         textMenuPrincipal1 = new EnvText(env, "1. Charger un profil de joueur existant ?", 250, 280);
         textMenuPrincipal2 = new EnvText(env, "2. Créer un nouveau joueur ?", 250, 260);
         textMenuPrincipal3 = new EnvText(env, "3. Sortir du jeu ?", 250, 240);
-        textMenuPrincipal4 = new EnvText(env, "4. Ajouter un mot dans le dico ?", 250, 220);
-        
-        textChoixNiveau = new EnvText(env, "Choisir niveau du mot : \n\t\t\t\t-1\n\t\t\t\t-2\n\t\t\t\t-3\n\t\t\t\t-4\n\t\t\t\t-5", 250, 220);
-        
-        textSecondesRestantes = new EnvText(env, "", 250, 220,100,0,255,0,0,0,0);
-        textMotAtrouver = new EnvText(env, "", 250, 240,100,0,255,0,0,0,0);
- 
+        textMenuPrincipal4 = new EnvText(env, "4. Ajouter un mot dans le dico ? (dans la console)", 250, 220);
+
+        textChoixNiveau = new EnvText(env, "Choisir niveau du mot : \n\t\t\t-Niveau 1\n\t\t\t-Niveau 2\n\t\t\t-Niveau 3\n\t\t\t-Niveau 4\n\t\t\t-Niveau 5", 250, 300);
+
+        textSecondesRestantes = new EnvText(env, "", 250, 220, 100, 0, 255, 0, 0, 0, 0);
+        textMotAtrouver = new EnvText(env, "", 250, 240, 100, 0, 255, 0, 0, 0, 0);
+
+        timeInGame = new EnvText(env, "Secondes restantes : ", 150, 480);
+        nextLetterToFind = new EnvText(env, "Lettre  : ", 400, 480);
+        savePartieInFile = new EnvText(env, "Voulez vous entregistrer votre partie ? (O/N)", 250, 220);
     }
 
     /**
@@ -208,7 +226,6 @@ public abstract class Jeu {
         textMenuPrincipal3.display();
         textMenuPrincipal4.display();
 
-
         // vérifie qu'une touche 1, 2 , 3 ou 4 est pressée
         int touche = 0;
         while (!(touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_4)) {
@@ -232,11 +249,11 @@ public abstract class Jeu {
                 // demande le nom du joueur existant
                 nomJoueur = getNomJoueur();
                 System.out.println("Nom du joueur choisi : " + nomJoueur);
-                
+
                 // charge le profil de ce joueur si possible
                 File f = new File("src/XML/" + nomJoueur + ".xml");
                 if (f.exists()) {
-                    this.profil = new Profil("src/XML/" +nomJoueur+".xml");
+                    this.profil = new Profil("src/XML/" + nomJoueur + ".xml");
                     // lance le menu de jeu et récupère le choix à la sortie de ce menu de jeu
                     System.out.println("Nom du joueur VALIDE : " + nomJoueur + "PROFIL = " + profil);
                     choix = menuJeu();
@@ -254,21 +271,15 @@ public abstract class Jeu {
                 // demande le nom du nouveau joueur
                 nomJoueur = getNomJoueur();
                 // On creer un fichier nomJoueur.xml pour le nouveau joueur   
-                /*
-                File profileFile = new File("src/XML/"+nomJoueur + ".xml");
-                if(!profileFile.exists()){
-                        try {
-                            System.out.println("PROFILE DISPO ! ");
-                            profileFile.createNewFile();
-                            
-                            
-                        } catch (IOException ex) {
-                            Logger.getLogger(Jeu.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                } 
-                */
+
+                File profileFile = new File("src/XML/" + nomJoueur + ".xml");
+                if (!profileFile.exists()) {
+                    this.newJoueurProfil(nomJoueur);
+                      profil = new Profil("src/XML" + nomJoueur + ".xml");
+                }
+
                 // crée un profil avec le nom d'un nouveau joueur
-                profil = new Profil(nomJoueur,"");
+              
                 // lance le menu de jeu et récupère le choix à la sortie de ce menu de jeu
                 choix = menuJeu();
                 break;
@@ -280,14 +291,14 @@ public abstract class Jeu {
                 // le choix est de sortir du jeu (quitter l'application)
                 choix = MENU_VAL.MENU_SORTIE;
                 break;
-                // -------------------------------------
+            // -------------------------------------
             // Touche 4 : Permet au joueur d'ajouter un mot et son niveau
             // -------------------------------------
             case Keyboard.KEY_4:
                 // le choix est de sortir du jeu (quitter l'application)
                 System.out.println("*****AJOUT D'UNE LETTRE******");
                 Scanner sc = new Scanner(System.in);
-                 System.out.println("Saisissez votre mot: ");
+                System.out.println("Saisissez votre mot: ");
                 String mot = sc.nextLine();
                 System.out.println("niveau du mot : ");
                 int niveau = sc.nextInt();
@@ -295,7 +306,7 @@ public abstract class Jeu {
                 editDico.lireDOM("src/XML/dictionnaire.xml");
                 editDico.ajouterMot(mot, niveau);
                 editDico.ecrireDOM("src/XML/dictionnaire.xml");
-                System.out.print("Ajout de  : " + mot +  " ( niveau = " + niveau +") dans le dictionnaire\n\n");
+                System.out.print("Ajout de  : " + mot + " ( niveau = " + niveau + ") dans le dictionnaire\n\n");
                 break;
         }
         return choix;
@@ -350,9 +361,9 @@ public abstract class Jeu {
                     String mot = dictionnaire.getMotDepuisListeNiveaux(toucheNiveau);
 
                     System.out.println("Mot a chercher = " + mot);
-                   
+
                     // .......... dico ...........
-                    // crée un nouvelle partie
+                    // crée une nouvelle partie
                     partie = new Partie(java.time.LocalDate.now().toString(), mot, toucheNiveau);
                     // joue
                     joue(partie);
@@ -360,8 +371,8 @@ public abstract class Jeu {
                     // .......... profil .........
 
                     this.profil.ajouterPartie(partie);
-                    this.profil.sauvegarder("src/XML/" + this.profil.getNom() +".xml");
-                    
+                    this.profil.sauvegarder("src/XML/" + this.profil.getNom() + ".xml");
+
                     playTheGame = MENU_VAL.MENU_JOUE;
                     break;
 
@@ -377,40 +388,34 @@ public abstract class Jeu {
                     Partie partieJouable = null;
                     boolean partieJouableFound = false;
                     int i = 0;
-                    
-                    while(i < this.profil.getParties().size() && !partieJouableFound)
-                    {
+
+                    while (i < this.profil.getParties().size() && !partieJouableFound) {
                         // Partie au rang i
-                        Partie p = this.profil.getParties().get(i);                     
-                        try{
+                        Partie p = this.profil.getParties().get(i);
+                        try {
                             // format de la date 
-                            SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd");  
+                            SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
                             Date datePartie = dateformat.parse(p.getDate());
                             Date dateSouhaitee = dateformat.parse(date);
                             // partie et date demandee MEME jour
-                            if(datePartie.compareTo(dateSouhaitee) == 0)
-                            {
-                               System.out.println("\t\tPartie = " + p);
+                            if (datePartie.compareTo(dateSouhaitee) == 0) {
+                                System.out.println("\t\tPartie = " + p);
                                 partieJouable = p;
                                 partieJouableFound = true;
-                            }
-                            // jour different
-                            else
-                            {
-                                 System.out.println("DATE DIFF JOUR = " + datePartie.getTime() + " --- "  + dateSouhaitee.getTime());
+                            } // jour different
+                            else {
+                                System.out.println("DATE DIFF JOUR = " + datePartie.getTime() + " --- " + dateSouhaitee.getTime());
 
-                            }                                                
-                        }catch(Exception e)
-                        {
+                            }
+                        } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
                         i++;
 
                     }
-              
+
                     // Si partie trouvée, recupère le mot de la partie existante, sinon ???
-                    if(partieJouableFound)
-                    {
+                    if (partieJouableFound) {
                         System.out.println("PARTIE Jeu = " + partieJouable);
                         // joue
                         joue(partieJouable);
@@ -418,10 +423,8 @@ public abstract class Jeu {
                         System.out.print("Enregistrement ");
                         this.profil.sauvegarder("enregistrer.xml");
                         playTheGame = MENU_VAL.MENU_JOUE;
-                    }
-                    else
-                    {
-                        System.out.println("PARTIE INCONNUE A LA DATE : " +date);
+                    } else {
+                        System.out.println("PARTIE INCONNUE A LA DATE : " + date);
                     }
                     break;
 
@@ -442,31 +445,27 @@ public abstract class Jeu {
         return playTheGame;
     }
 
-    
-    public String getDateUtilisateur()
-    {
-            String date = "";
+    public String getDateUtilisateur() {
+        String date = "";
         // demander de fournir une date    (format jj/mm/aaaa)
-                    String regex = "^[0-9]{4}-[0-9]{2}-[0-9]{2}$";
-                    //Creating a pattern object
-                    Pattern pattern = Pattern.compile(regex);
-                    //Matching the compiled pattern in the String
-                    Matcher matcher;
-                    
-                    this.textMenuPrincipal1.modifyTextAndDisplay("Date de votre partie : (aaaa/mm/jj) : ");
+        String regex = "^[0-9]{4}-[0-9]{2}-[0-9]{2}$";
+        //Creating a pattern object
+        Pattern pattern = Pattern.compile(regex);
+        //Matching the compiled pattern in the String
+        Matcher matcher;
 
-                    // recupere la date que l'utilisateur veut
-                    
-                    do{
-                        date = this.textMenuPrincipal1.lire(true);
-                        matcher = pattern.matcher(date);
-                        
-                    }while(!matcher.matches());
+        this.textMenuPrincipal1.modifyTextAndDisplay("Date de votre partie : ( aaaa-mm-jj ) : ");
 
-                    this.textMenuPrincipal1.clean();
-                    return date;
+        // recupere la date que l'utilisateur veut                    
+        do {
+            date = this.textMenuPrincipal1.lire(true);
+            matcher = pattern.matcher(date);
+        } while (!matcher.matches());
+
+        this.textMenuPrincipal1.clean();
+        return date;
     }
-                    
+
     // permet au joueur de saisir un niveau entre 1 et 5 
     private int getNiveauChoix() {
         int toucheNiveau = 0;
@@ -476,15 +475,14 @@ public abstract class Jeu {
             toucheNiveau = env.getKey();
             toucheNiveau -= 1;
             env.advanceOneFrame();
-            System.out.println("touche niveau = " + toucheNiveau);
         }
-          this.textChoixNiveau.clean();
+        this.textChoixNiveau.clean();
         return toucheNiveau;
     }
 
     public void joue(Partie partie) {
         System.out.println("joue partie : " + partie);
-        
+
         // affiche 5 secondes la lettre a l'ecran 
         Chronometre c = new Chronometre(5000);
         this.textMotAtrouver.modifyTextAndDisplay("Mot a trouver : " + partie.getMot());
@@ -493,7 +491,7 @@ public abstract class Jeu {
             env.advanceOneFrame();
             this.textSecondesRestantes.modifyTextAndDisplay((5 - c.timeSpent()) + " secondes restantes");
         }
-        
+
         textSecondesRestantes.clean();
         textMotAtrouver.clean();
         // Instancie un Tux
@@ -502,16 +500,17 @@ public abstract class Jeu {
 
         // Ici, on peut initialiser des valeurs pour une nouvelle partie
         demarrePartie(partie);
-        
+
         // On affiche les lettres dans l'environnement     
         for (Lettre l : lettres) {
-            env.addObject(l);          
-        } 
-        
+            env.addObject(l);
+        }
+
         tux.deplace();
         // Boucle de jeu
         Boolean finished;
         finished = false;
+        // Boucle s'arrete si : l'utilisateur presse ECHAP ou le temps du chrono est depasse ou le mot est trouve 
         while (!finished && partie.isTempsDispo() && partie.isMotTrouve()) {
 
             // Contrôles globaux du jeu (sortie, ...)
@@ -519,8 +518,6 @@ public abstract class Jeu {
             if (env.getKey() == 1) {
                 finished = true;
             }
-
-            
             // Contrôles des déplacements de Tux (gauche, droite, ...)
             tux.deplace();
             // Ici, on applique les regles
@@ -530,13 +527,13 @@ public abstract class Jeu {
             env.advanceOneFrame();
         }
 
-         // On enleve les lettres dans l'environnement (elles disparaissent de l'ecran)    
+        // On enleve les lettres dans l'environnement (elles disparaissent de l'ecran)    
         for (Lettre l : lettres) {
-            env.removeObject(l);          
-        } 
+            env.removeObject(l);
+        }
         // on vide la tableau de lettres au cas ou le joueur veut rejouer un partie
         lettres.clear();
-        
+
         // Ici on peut calculer des valeurs lorsque la partie est terminée
         terminePartie(partie);
         System.out.println("Partie = " + partie);
@@ -544,9 +541,8 @@ public abstract class Jeu {
 
 // Permet de verifier si la lettre 'letter' entre en collision avec le personnage 'Tux'
     public boolean collision(Lettre letter) {
-        if (distance(letter) >   this.tux.getScale()) {
+        if (distance(letter) > this.tux.getScale()) {
             return false;
-          
         } else {
             return true;
         }
@@ -565,6 +561,45 @@ public abstract class Jeu {
         double distance = Math.sqrt(distance_x + distance_y);
 
         return distance;
+    }
+
+    public void newJoueurProfil(String nomProfile) {
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.newDocument();
+
+            // root element
+            Element rootElement = doc.createElement("profil");
+            doc.appendChild(rootElement);
+
+            // nom element
+            Element nomElement = doc.createElement("nom");
+            rootElement.appendChild(nomElement);
+            Text nomText = doc.createTextNode(nomProfile);
+            nomElement.appendChild(nomText);
+
+            // avatar element
+            Element avatarElement = doc.createElement("avatar");
+            rootElement.appendChild(avatarElement);
+            Text avatarText = doc.createTextNode(nomProfile + ".jpg");
+            avatarElement.appendChild(avatarText);
+
+            // anniversaire element
+            Element annivElement = doc.createElement("anniversaire");
+            rootElement.appendChild(annivElement);
+            Text annivText = doc.createTextNode("");
+            annivElement.appendChild(annivText);
+
+            // parties element
+            Element partiesElement = doc.createElement("parties");
+            rootElement.appendChild(partiesElement);
+
+            // ecriture du dom vers xml
+            DocumentTransform.writeDoc(doc, "src/XML/" + nomProfile + ".xml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // Methode utilisee au lancement du jeu (1 seule fois par partie)

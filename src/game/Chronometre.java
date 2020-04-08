@@ -59,7 +59,6 @@ public class Chronometre {
         current = System.currentTimeMillis();
         int timeSpent;
         timeSpent = (int) ((   current - begin      )/1000.0);
-        System.out.println("tps : " + timeSpent);
         if(timeSpent < limite/1000)
         {
        return true;
