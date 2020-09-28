@@ -7,8 +7,6 @@ package game;
 
 import env3d.Env;
 import game.XMLUtil.DocumentTransform;
-import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,15 +16,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.lwjgl.input.Keyboard;
-import org.xml.sax.SAXException;
-import test.TestDico;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import java.io.File;
@@ -60,6 +51,7 @@ public abstract class Jeu {
     EnvText textMenuPrincipal3;
     EnvText textMenuPrincipal4;
 
+    EnvText textDatePartie;
     EnvText textChoixNiveau;
     EnvText textSecondesRestantes;
     EnvText textMotAtrouver;
@@ -99,8 +91,9 @@ public abstract class Jeu {
         try {
             // dictionnaire.lireDictionnaireDOM("src/XML/", "dictionnaire.xml");
             dictionnaire.lireDictionnaire();
-        } catch (Exception ex) {
-            Logger.getLogger(TestDico.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) 
+        {
+            System.out.println("Erreur chargement dico");
         }
 
         // Textes affichés à l'écran
@@ -116,7 +109,8 @@ public abstract class Jeu {
         textMenuPrincipal4 = new EnvText(env, "4. Ajouter un mot dans le dico ? (dans la console)", 250, 220);
 
         textChoixNiveau = new EnvText(env, "Choisir niveau du mot : \n\t\t\t-Niveau 1\n\t\t\t-Niveau 2\n\t\t\t-Niveau 3\n\t\t\t-Niveau 4\n\t\t\t-Niveau 5", 250, 300);
-
+        
+        textDatePartie = new EnvText(env, "Date de votre partie : ( aaaa-mm-jj ) : ", 250, 280);
         textSecondesRestantes = new EnvText(env, "", 250, 220, 100, 0, 255, 0, 0, 0, 0);
         textMotAtrouver = new EnvText(env, "", 250, 240, 100, 0, 255, 0, 0, 0, 0);
 
@@ -270,16 +264,13 @@ public abstract class Jeu {
             case Keyboard.KEY_2:
                 // demande le nom du nouveau joueur
                 nomJoueur = getNomJoueur();
+                
                 // On creer un fichier nomJoueur.xml pour le nouveau joueur   
-
                 File profileFile = new File("src/XML/" + nomJoueur + ".xml");
                 if (!profileFile.exists()) {
                     this.newJoueurProfil(nomJoueur);
-                      profil = new Profil("src/XML" + nomJoueur + ".xml");
-                }
-
-                // crée un profil avec le nom d'un nouveau joueur
-              
+                    profil = new Profil("src/XML/" + nomJoueur + ".xml");
+                }              
                 // lance le menu de jeu et récupère le choix à la sortie de ce menu de jeu
                 choix = menuJeu();
                 break;
@@ -454,11 +445,11 @@ public abstract class Jeu {
         //Matching the compiled pattern in the String
         Matcher matcher;
 
-        this.textMenuPrincipal1.modifyTextAndDisplay("Date de votre partie : ( aaaa-mm-jj ) : ");
+        this.textDatePartie.modifyTextAndDisplay("Date de votre partie : ( aaaa-mm-jj ) : ");
 
         // recupere la date que l'utilisateur veut                    
         do {
-            date = this.textMenuPrincipal1.lire(true);
+            date = this.textDatePartie.lire(true);
             matcher = pattern.matcher(date);
         } while (!matcher.matches());
 

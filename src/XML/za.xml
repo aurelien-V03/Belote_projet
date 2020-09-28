@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<profil>
+    <nom>za</nom>
+    <avatar>za.jpg</avatar>
+    <anniversaire/>
+    <parties>
+        <partie date="2020-09-28" trouve="85">
+            <temps>30.0</temps>
+            <mot niveau="1">malcolm</mot>
+        </partie>
+    </parties>
+</profil>

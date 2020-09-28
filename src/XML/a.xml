@@ -153,5 +153,17 @@
             <temps>24.0</temps>
             <mot niveau="2">esturgeon</mot>
         </partie>
+    <partie date="2020-04-08" trouve="71">
+            <temps>16.0</temps>
+            <mot niveau="1">malcolm</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>6.0</temps>
+            <mot niveau="1">malcolm</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>3.0</temps>
+            <mot niveau="2">automobile</mot>
+        </partie>
     </parties>
 </profil>

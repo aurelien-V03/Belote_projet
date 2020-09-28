@@ -13,89 +13,157 @@
             <temps>20.0</temps>
             <mot niveau="2">indice</mot>
         </partie>
-        <partie date="2013-12-11">
-            <temps>20.0</temps>
-            <mot niveau="2">indice</mot>
-        </partie>
-    <partie date="2020-04-03">
-            <temps>25.0</temps>
-            <mot niveau="1">animals</mot>
-        </partie>
-    <partie date="2020-04-03" trouve="0">
-            <temps>27.0</temps>
-            <mot niveau="1">animals</mot>
-        </partie>
-    <partie date="2020-04-03" trouve="0">
+        
+   
+    
+    
+    <partie date="2020-04-07" trouve="33">
             <temps>22.0</temps>
-            <mot niveau="1">souris</mot>
-        </partie>
-    <partie date="2020-04-03" trouve="0">
-            <temps>13.0</temps>
-            <mot niveau="1">biche</mot>
-        </partie>
-    <partie date="2020-04-03" trouve="0">
-            <temps>36.0</temps>
-            <mot niveau="1">animals</mot>
-        </partie>
-    <partie date="2020-04-03" trouve="0">
-            <temps>5.0</temps>
-            <mot niveau="1">biche</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>16.0</temps>
-            <mot niveau="1">biche</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>24.0</temps>
-            <mot niveau="1">voiture</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>33.0</temps>
-            <mot niveau="1">souris</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>14.0</temps>
-            <mot niveau="1">esturgeon</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>60.0</temps>
-            <mot niveau="1">biche</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>3.0</temps>
-            <mot niveau="1">voiture</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>2.0</temps>
-            <mot niveau="1">biche</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>3.0</temps>
-            <mot niveau="1">esturgeon</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>5.0</temps>
-            <mot niveau="1">esturgeon</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>7.0</temps>
-            <mot niveau="1">voiture</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>3.0</temps>
-            <mot niveau="1">biche</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>3.0</temps>
-            <mot niveau="4">remorque</mot>
-        </partie>
-    <partie date="2020-04-06" trouve="0">
-            <temps>2.0</temps>
             <mot niveau="2">esturgeon</mot>
         </partie>
-    <partie date="2020-04-06" trouve="0">
+    <partie date="2020-04-07" trouve="71">
+            <temps>16.0</temps>
+            <mot niveau="3">salsifi</mot>
+        </partie>
+    <partie date="2020-04-07" trouve="100">
+            <temps>24.0</temps>
+            <mot niveau="1">animals</mot>
+        </partie>
+        <partie date="2020-04-07" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="2">esturgeon</mot>
+        </partie>
+    <partie date="2020-04-07" trouve="0">
+            <temps>10.0</temps>
+            <mot niveau="1">souris</mot>
+        </partie>
+    <partie date="2020-04-07" trouve="0">
+            <temps>10.0</temps>
+            <mot niveau="2">esturgeon</mot>
+        </partie>
+    <partie date="2020-04-07" trouve="0">
+            <temps>10.0</temps>
+            <mot niveau="1">souris</mot>
+        </partie>
+    <partie date="2020-04-07" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="1">souris</mot>
+        </partie>
+    <partie date="2020-04-07" trouve="0">
+            <temps>5.0</temps>
+            <mot niveau="2">esturgeon</mot>
+        </partie>
+    <partie date="2020-04-07" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="1">voiture</mot>
+        </partie>
+    <partie date="2020-04-07" trouve="0">
+            <temps>18.0</temps>
+            <mot niveau="1">souris</mot>
+        </partie>
+    <partie date="2020-04-07" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="1">biche</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="2">esturgeon</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>1.0</temps>
+            <mot niveau="1">souris</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="1">souris</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>6.0</temps>
+            <mot niveau="1">animals</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="2">esturgeon</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="100">
+            <temps>21.0</temps>
+            <mot niveau="1">animals</mot>
+        </partie>
+        <partie date="2020-04-08" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="1">animals</mot>
+        </partie>
+        <partie date="2020-04-08" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="2">esturgeon</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
             <temps>3.0</temps>
             <mot niveau="1">souris</mot>
+        </partie>
+        <partie date="2020-04-08" trouve="0">
+            <temps>1.0</temps>
+            <mot niveau="2">esturgeon</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>6.0</temps>
+            <mot niveau="1">animals</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="100">
+            <temps>15.0</temps>
+            <mot niveau="1">souris</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="2">esturgeon</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="1">voiture</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="100">
+            <temps>21.0</temps>
+            <mot niveau="1">souris</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>7.0</temps>
+            <mot niveau="1">animals</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="100">
+            <temps>15.0</temps>
+            <mot niveau="1">biche</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>3.0</temps>
+            <mot niveau="1">biche</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>30.0</temps>
+            <mot niveau="1">voiture</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>17.0</temps>
+            <mot niveau="1">animals</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>1.0</temps>
+            <mot niveau="1">voiture</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="100">
+            <temps>24.0</temps>
+            <mot niveau="2">esturgeon</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="71">
+            <temps>16.0</temps>
+            <mot niveau="1">malcolm</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>6.0</temps>
+            <mot niveau="1">malcolm</mot>
+        </partie>
+    <partie date="2020-04-08" trouve="0">
+            <temps>3.0</temps>
+            <mot niveau="2">automobile</mot>
         </partie>
     </parties>
 </profil>
